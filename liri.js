@@ -11,21 +11,27 @@ const fs = require('fs');
 let command = process.argv[2];
 let value = process.argv[3];
 
+
 // Switch Statement
-switch (command) {
-    case "concert-this":
-        concertThis(value);
-        break;
-    case "spotify-this-song":
-        spotifySong(value);
-        break;
-    case "movie-this":
-        movieThis(value);
-        break;
-    case "do-what-it-says":
-        doThis(value);
-        break;
-};
+
+function mainMenu(command, value) {
+    switch (command) {
+        case "concert-this":
+            concertThis(value);
+            break;
+        case "spotify-this-song":
+            spotifySong(value);
+            break;
+        case "movie-this":
+            movieThis(value);
+            break;
+        case "do-what-it-says":
+            doThis();
+            break;
+        default:
+            break;
+    };
+}
 
 // Create search function for each variable
 function concertThis(value) {
@@ -34,13 +40,15 @@ function concertThis(value) {
             for (let i = 0; i < response.data.length; i++) {
 
                 let datetime = response.data[i].datetime;
-                let dateArr = datetime.split('T'); //Attempting to split the date and time in the response
+                let dateArr = datetime.split('T');
+                console.log(dateArr);
 
                 let concertResults =
                     "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" +
                     "\nVenue Name: " + response.data[i].venue.name +
                     "\nVenue Location: " + response.data[i].venue.city +
-                    "\nDate of the Event: " + moment(dateArr[0], "MM-DD-YYYY");
+                    "\nDate of the Event: " + moment(dateArr[0], "YYYY-MM-DD").format("MM-DD-YYYY");
+
                 console.log(concertResults);
             }
         })
@@ -53,18 +61,21 @@ function concertThis(value) {
 
 function spotifySong(value) {
     if (!value) {
-        value = "The Sign";
+        value = "The Sign Ace of Base";
     }
     spotify
         .search({ type: 'track', query: value })
         .then(function (response) {
+            console.log(response);
+
             for (let i = 0; i < 5; i++) {
                 let spotifyResults =
                     "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" +
-                    "\nArtist(s): " + response.tracks.items[i].artists[0].name +
+                    "\nArtist: " + response.tracks.items[i].artists[0].name +
                     "\nSong Name: " + response.tracks.items[i].name +
                     "\nAlbum Name: " + response.tracks.items[i].album.name +
                     "\nPreview Link: " + response.tracks.items[i].preview_url;
+
 
                 console.log(spotifyResults);
             }
@@ -90,6 +101,7 @@ function movieThis(value) {
                 "\nLanguage: " + response.data.Language +
                 "\nPlot: " + response.data.Plot +
                 "\nActors/Actresses: " + response.data.Actors;
+
             console.log(movieResults);
         })
         .catch(function (error) {
@@ -105,6 +117,10 @@ function doThis(value) {
             return console.log(error);
         }
         let dataArr = data.split(',');
-        spotifySong(dataArr[0], dataArr[1]);
+        console.log(dataArr)
+        let commandFromFile = dataArr[0]
+        let songName = dataArr[1]
+        mainMenu(dataArr[0], dataArr[1])
     })
 }
+mainMenu(command, value);
