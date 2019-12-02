@@ -66,7 +66,6 @@ function spotifySong(value) {
     spotify
         .search({ type: 'track', query: value })
         .then(function (response) {
-            console.log(response);
 
             for (let i = 0; i < 5; i++) {
                 let spotifyResults =
